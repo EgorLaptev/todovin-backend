@@ -24,7 +24,9 @@ class UserController extends Controller
     public function login(LoginUserRequest $request)
     {
         $attempt = Auth::attempt($request->validated());
-        return $attempt;
+        return response([
+            'token' => Auth::user()['api_token']
+        ], 200);
     }
 
 

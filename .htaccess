@@ -2,3 +2,4 @@ RewriteEngine Off
 RewriteBase /
 
 RewriteRule ^(.*)$ public/$1
+
