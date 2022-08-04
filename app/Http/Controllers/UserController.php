@@ -71,7 +71,7 @@ class UserController extends Controller
             'api_token' => Str::random(60)
         ]);
 
-        return response($user, 201);
+        return response([ 'token' => $user['api_token'] ], 201);
 
     }
 

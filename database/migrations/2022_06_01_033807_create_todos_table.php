@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->string('title', 30);
             $table->string('description', 1000);
-            $table->boolean('done')->default(false);
+            $table->boolean('completed')->default(false);
             $table->json('tags');
             $table->timestamps();
         });
