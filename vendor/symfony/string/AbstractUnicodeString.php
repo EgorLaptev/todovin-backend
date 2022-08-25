@@ -484,11 +484,8 @@ abstract class AbstractUnicodeString extends AbstractString
                 )|[\p{Cc}\x7F]++)/xu', '', $s);
             }
 
-            $lineWidth = $this->wcswidth($s);
-
-            if ($lineWidth > $width) {
-                $width = $lineWidth;
-            }
+            // Non printable characters have been dropped, so wcswidth cannot logically return -1.
+            $width += $this->wcswidth($s);
         }
 
         return $width;

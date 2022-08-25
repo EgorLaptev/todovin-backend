@@ -431,10 +431,8 @@ class Readline
 
     /**
      * Get the autocompleter.
-     *
-     * @return ?Autocompleter
      */
-    public function getAutocompleter()
+    public function getAutocompleter(): Autocompleter
     {
         return $this->_autocompleter;
     }

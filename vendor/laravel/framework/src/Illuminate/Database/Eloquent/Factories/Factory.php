@@ -19,8 +19,6 @@ use Throwable;
 
 /**
  * @template TModel of \Illuminate\Database\Eloquent\Model
- *
- * @method $this trashed()
  */
 abstract class Factory
 {
@@ -280,7 +278,7 @@ abstract class Factory
     /**
      * Create a collection of models and persist them to the database without dispatching any model events.
      *
-     * @param  (callable(array<string, mixed>): array<string, mixed>)|array<string, mixed>  $attributes
+     * @param  array<string, mixed>  $attributes
      * @param  \Illuminate\Database\Eloquent\Model|null  $parent
      * @return \Illuminate\Database\Eloquent\Collection<int, \Illuminate\Database\Eloquent\Model|TModel>|\Illuminate\Database\Eloquent\Model|TModel
      */
@@ -569,7 +567,7 @@ abstract class Factory
     /**
      * Define an attached relationship for the model.
      *
-     * @param  \Illuminate\Database\Eloquent\Factories\Factory|\Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array  $factory
+     * @param  \Illuminate\Database\Eloquent\Factories\Factory|\Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model  $factory
      * @param  (callable(): array<string, mixed>)|array<string, mixed>  $pivot
      * @param  string|null  $relationship
      * @return static

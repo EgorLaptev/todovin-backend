@@ -22,4 +22,3 @@ Route::apiResources([
     'todos' => TodoController::class,
     'users' => UserController::class
 ]);
-

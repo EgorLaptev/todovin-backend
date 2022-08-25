@@ -2,7 +2,6 @@
 
 namespace Illuminate\Mail;
 
-use Illuminate\Contracts\Mail\Attachable;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\ForwardsCalls;
 use Symfony\Component\Mime\Address;
@@ -24,8 +23,6 @@ class Message
 
     /**
      * CIDs of files embedded in the message.
-     *
-     * @deprecated Will be removed in a future Laravel version.
      *
      * @var array
      */
@@ -293,20 +290,12 @@ class Message
     /**
      * Attach a file to the message.
      *
-     * @param  string|\Illuminate\Contracts\Mail\Attachable|\Illuminate\Mail\Attachment  $file
+     * @param  string  $file
      * @param  array  $options
      * @return $this
      */
     public function attach($file, array $options = [])
     {
-        if ($file instanceof Attachable) {
-            $file = $file->toMailAttachment();
-        }
-
-        if ($file instanceof Attachment) {
-            return $file->attachTo($this);
-        }
-
         $this->message->attachFromPath($file, $options['as'] ?? null, $options['mime'] ?? null);
 
         return $this;
@@ -330,32 +319,11 @@ class Message
     /**
      * Embed a file in the message and get the CID.
      *
-     * @param  string|\Illuminate\Contracts\Mail\Attachable|\Illuminate\Mail\Attachment  $file
+     * @param  string  $file
      * @return string
      */
     public function embed($file)
     {
-        if ($file instanceof Attachable) {
-            $file = $file->toMailAttachment();
-        }
-
-        if ($file instanceof Attachment) {
-            return $file->attachWith(
-                function ($path) use ($file) {
-                    $cid = $file->as ?? Str::random();
-
-                    $this->message->embedFromPath($path, $cid, $file->mime);
-
-                    return "cid:{$cid}";
-                },
-                function ($data) use ($file) {
-                    $this->message->embed($data(), $file->as, $file->mime);
-
-                    return "cid:{$file->as}";
-                }
-            );
-        }
-
         $cid = Str::random(10);
 
         $this->message->embedFromPath($file, $cid);

@@ -814,7 +814,7 @@ EOF;
     /**
      * Assert that the response does not contain the given path.
      *
-     * @param  string  $path
+     * @param  array  $data
      * @return $this
      */
     public function assertJsonMissingPath(string $path)
@@ -1439,13 +1439,7 @@ EOF;
      */
     protected function session()
     {
-        $session = app('session.store');
-
-        if (! $session->isStarted()) {
-            $session->start();
-        }
-
-        return $session;
+        return app('session.store');
     }
 
     /**

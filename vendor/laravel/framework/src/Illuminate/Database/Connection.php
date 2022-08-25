@@ -2,7 +2,6 @@
 
 namespace Illuminate\Database;
 
-use Carbon\CarbonInterval;
 use Closure;
 use DateTimeInterface;
 use Doctrine\DBAL\Connection as DoctrineConnection;
@@ -20,7 +19,6 @@ use Illuminate\Database\Query\Grammars\Grammar as QueryGrammar;
 use Illuminate\Database\Query\Processors\Processor;
 use Illuminate\Database\Schema\Builder as SchemaBuilder;
 use Illuminate\Support\Arr;
-use Illuminate\Support\InteractsWithTime;
 use Illuminate\Support\Traits\Macroable;
 use PDO;
 use PDOStatement;
@@ -31,7 +29,6 @@ class Connection implements ConnectionInterface
     use DetectsConcurrencyErrors,
         DetectsLostConnections,
         Concerns\ManagesTransactions,
-        InteractsWithTime,
         Macroable;
 
     /**
@@ -159,20 +156,6 @@ class Connection implements ConnectionInterface
      * @var bool
      */
     protected $loggingQueries = false;
-
-    /**
-     * The duration of all executed queries in milliseconds.
-     *
-     * @var float
-     */
-    protected $totalQueryDuration = 0.0;
-
-    /**
-     * All of the registered query duration handlers.
-     *
-     * @var array
-     */
-    protected $queryDurationHandlers = [];
 
     /**
      * Indicates if the connection is in a "dry run".
@@ -772,8 +755,6 @@ class Connection implements ConnectionInterface
      */
     public function logQuery($query, $bindings, $time = null)
     {
-        $this->totalQueryDuration += $time ?? 0.0;
-
         $this->event(new QueryExecuted($query, $bindings, $time, $this));
 
         if ($this->loggingQueries) {
@@ -790,71 +771,6 @@ class Connection implements ConnectionInterface
     protected function getElapsedTime($start)
     {
         return round((microtime(true) - $start) * 1000, 2);
-    }
-
-    /**
-     * Register a callback to be invoked when the connection queries for longer than a given amount of time.
-     *
-     * @param  \DateTimeInterface|\Carbon\CarbonInterval|float|int  $threshold
-     * @param  callable  $handler
-     * @return void
-     */
-    public function whenQueryingForLongerThan($threshold, $handler)
-    {
-        $threshold = $threshold instanceof DateTimeInterface
-            ? $this->secondsUntil($threshold) * 1000
-            : $threshold;
-
-        $threshold = $threshold instanceof CarbonInterval
-            ? $threshold->totalMilliseconds
-            : $threshold;
-
-        $this->queryDurationHandlers[] = [
-            'has_run' => false,
-            'handler' => $handler,
-        ];
-
-        $key = count($this->queryDurationHandlers) - 1;
-
-        $this->listen(function ($event) use ($threshold, $handler, $key) {
-            if (! $this->queryDurationHandlers[$key]['has_run'] && $this->totalQueryDuration() > $threshold) {
-                $handler($this, $event);
-
-                $this->queryDurationHandlers[$key]['has_run'] = true;
-            }
-        });
-    }
-
-    /**
-     * Allow all the query duration handlers to run again, even if they have already run.
-     *
-     * @return void
-     */
-    public function allowQueryDurationHandlersToRunAgain()
-    {
-        foreach ($this->queryDurationHandlers as $key => $queryDurationHandler) {
-            $this->queryDurationHandlers[$key]['has_run'] = false;
-        }
-    }
-
-    /**
-     * Get the duration of all run queries in milliseconds.
-     *
-     * @return float
-     */
-    public function totalQueryDuration()
-    {
-        return $this->totalQueryDuration;
-    }
-
-    /**
-     * Reset the duration of all run queries.
-     *
-     * @return void
-     */
-    public function resetTotalQueryDuration()
-    {
-        $this->totalQueryDuration = 0.0;
     }
 
     /**

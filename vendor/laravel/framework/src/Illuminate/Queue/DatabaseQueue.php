@@ -269,10 +269,6 @@ class DatabaseQueue extends Queue implements QueueContract, ClearableQueue
             return 'FOR UPDATE SKIP LOCKED';
         }
 
-        if ($databaseEngine === 'sqlsrv') {
-            return 'with(rowlock,updlock,readpast)';
-        }
-
         return true;
     }
 

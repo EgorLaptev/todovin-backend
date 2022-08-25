@@ -2,7 +2,6 @@
 
 namespace Illuminate\Support;
 
-use ArgumentCountError;
 use ArrayAccess;
 use Illuminate\Support\Traits\Macroable;
 use InvalidArgumentException;
@@ -459,7 +458,7 @@ class Arr
      * Key an associative array by a field or using a callback.
      *
      * @param  array  $array
-     * @param  callable|array|string  $keyBy
+     * @param  callable|array|string
      * @return array
      */
     public static function keyBy($array, $keyBy)
@@ -556,11 +555,7 @@ class Arr
     {
         $keys = array_keys($array);
 
-        try {
-            $items = array_map($callback, $array, $keys);
-        } catch (ArgumentCountError) {
-            $items = array_map($callback, $array);
-        }
+        $items = array_map($callback, $array, $keys);
 
         return array_combine($keys, $items);
     }
@@ -588,7 +583,7 @@ class Arr
      * Get a value from the array, and remove it.
      *
      * @param  array  $array
-     * @param  string|int  $key
+     * @param  string  $key
      * @param  mixed  $default
      * @return mixed
      */

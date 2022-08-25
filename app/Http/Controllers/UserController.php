@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\TodoUpdated;
 use App\Http\Requests\DeleteUserRequest;
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\PatchUserRequest;
@@ -37,6 +38,8 @@ class UserController extends Controller
      */
     public function index()
     {
+
+
         $users = new UserCollection(User::all());
         return response($users, 200);
     }

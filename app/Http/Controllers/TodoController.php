@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\TodoStored;
+use App\Events\TodoUpdated;
 use App\Http\Requests\DeleteTodoRequest;
 use App\Http\Requests\PatchTodoRequest;
 use App\Http\Requests\TodoIndexRequest;
@@ -70,7 +72,13 @@ class TodoController extends Controller
     public function update(PatchTodoRequest $request, $id)
     {
         $todo = Todo::find($id);
-        $todo->fill($request->validated())->save();
+        $todo->fill($request->validated());
+
+        TodoUpdated::dispatch($todo);
+
+        $todo->save();
+
+        return response($todo, 200);
     }
 
     /**
